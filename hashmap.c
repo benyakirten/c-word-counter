@@ -195,9 +195,10 @@ void hashmap_print_sorted(Hashmap *map)
     qsort(all_items, total_items, sizeof(ArrayListItem), compare_items_desc);
 
     // Print sorted items
+    printf("Total unique words: %zu\n", total_items);
     for (size_t i = 0; i < total_items; i++)
     {
-        printf("(%zu) %s: %zu\n", strlen(all_items[i].word), all_items[i].word, all_items[i].count);
+        printf("%s: %zu\n", all_items[i].word, all_items[i].count);
     }
 
     free(all_items);

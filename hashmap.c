@@ -65,17 +65,17 @@ Hashmap *hashmap_from_file(char *path)
                 break;
             }
 
-            if (strlen(cleaned_word) > 0 && cleaned_word[strlen(cleaned_word) - 1] == '-')
-            {
-                cleaned_word = strncat(cleaned_word, word, WORD_MAX_LENGTH - 1);
-                cleaned_word = clean_word(word);
-                word = strtok(NULL, " \n");
-            }
-
             if (strlen(cleaned_word) == 0)
             {
                 free(cleaned_word);
                 continue;
+            }
+
+            if (cleaned_word[strlen(cleaned_word) - 1] == '-')
+            {
+                cleaned_word = strncat(cleaned_word, word, WORD_MAX_LENGTH - 1);
+                cleaned_word = clean_word(cleaned_word);
+                word = strtok(NULL, " \n");
             }
 
             hashmap_insert(map, cleaned_word);

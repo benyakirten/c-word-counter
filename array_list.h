@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "words.h"
+
 #ifndef ARRAY_LIST_H
 #define ARRAY_LIST_H
 
@@ -8,7 +10,6 @@
 #define ARRAY_LIST_CAPACITY_GROWTH_FACTOR 1.5
 #define ARRAY_LIST_CAPACITY_GROWTH_FACTOR_MIN 1.2
 #define ARRAY_LIST_CAPACITY_MAX_RATIO 0.75
-#define WORD_MAX_LENGTH 100
 
 typedef struct
 {

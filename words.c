@@ -3,10 +3,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "array_list.h"
+#include "words.h"
+
 char *clean_word(char *word)
 {
     // Remove punctuation and convert to lowercase
-    char *cleaned = malloc(strlen(word) + 1);
+    char *cleaned = malloc(WORD_MAX_LENGTH * sizeof(char));
     if (cleaned == NULL)
     {
         return NULL; // Memory allocation failed

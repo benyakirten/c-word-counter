@@ -7,7 +7,6 @@
 #include "words.h"
 
 #define FILE_READ_BUFFER_SIZE 1024
-#define MAX_WORD_LENGTH 100
 
 int hash(char *key)
 {
@@ -60,20 +59,22 @@ Hashmap *hashmap_from_file(char *path)
             char *cleaned_word = clean_word(word);
             word = strtok(NULL, " \n");
 
+            if (cleaned_word == NULL)
+            {
+                free(cleaned_word);
+                break;
+            }
+
             if (strlen(cleaned_word) > 0 && cleaned_word[strlen(cleaned_word) - 1] == '-')
             {
-                cleaned_word = strncat(cleaned_word, word, MAX_WORD_LENGTH - 1);
+                cleaned_word = strncat(cleaned_word, word, WORD_MAX_LENGTH - 1);
                 cleaned_word = clean_word(word);
                 word = strtok(NULL, " \n");
             }
 
-            if (cleaned_word == NULL)
-            {
-                break;
-            }
-
             if (strlen(cleaned_word) == 0)
             {
+                free(cleaned_word);
                 continue;
             }
 
@@ -82,6 +83,7 @@ Hashmap *hashmap_from_file(char *path)
         }
     }
 
+    fclose(file);
     return map;
 }
 
@@ -117,7 +119,7 @@ size_t *hashmap_get(Hashmap *map, char *word)
     return &item->count;
 }
 
-bool hashmap_insert(Hashmap *map, char word[ARRAY_LIST_WORD_MAX_LENGTH])
+bool hashmap_insert(Hashmap *map, char word[WORD_MAX_LENGTH])
 {
     int hash_value = hash(word);
     ArrayList *array_list = map->items[hash_value];

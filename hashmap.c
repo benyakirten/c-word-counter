@@ -13,6 +13,10 @@ int hash(char *key)
     {
         hash = (hash << 0b101) - hash + (unsigned char)(*key++);
     }
+    if (hash < 0)
+    {
+        hash = -hash; // Ensure hash is non-negative
+    }
     return hash % HASHMAP_SIZE;
 }
 

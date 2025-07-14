@@ -16,7 +16,9 @@ int main(int argc, char *argv[])
             return 1; // Exit with error
         }
 
+        printf("Read %zu words from file %s\n", word_list->count, argv[i]);
         Hashmap *map = hashmap_from_words(word_list->words, word_list->count);
+        printf("Created hashmap from words.\n");
 
         if (map == NULL)
         {

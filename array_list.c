@@ -178,18 +178,6 @@ bool array_list_grow(ArrayList *list, size_t *new_capacity)
     return true;
 }
 
-bool array_list_increase_count(ArrayList *list, size_t index __attribute__((unused)), char word[ARRAY_LIST_WORD_MAX_LENGTH])
-{
-    ArrayListItem *item = array_list_find(list, word);
-    if (item == NULL)
-    {
-        return false;
-    }
-
-    item->count = item->count + 1;
-    return true;
-}
-
 ArrayListItem *array_list_find(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH])
 {
     for (size_t i = 0; i < list->size; i++)

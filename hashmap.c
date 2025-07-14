@@ -60,16 +60,9 @@ Hashmap *hashmap_from_file(char *path)
             char *cleaned_word = clean_word(word);
             word = strtok(NULL, " \n");
 
-            if (cleaned_word[strlen(cleaned_word) - 1] == '-')
+            if (strlen(cleaned_word) > 0 && cleaned_word[strlen(cleaned_word) - 1] == '-')
             {
-                word = strncat(cleaned_word, word, MAX_WORD_LENGTH);
-                cleaned_word = clean_word(word);
-                word = strtok(NULL, " \n");
-            }
-
-            if (cleaned_word[strlen(cleaned_word) - 1] == '-')
-            {
-                word = strncat(cleaned_word, word, MAX_WORD_LENGTH);
+                cleaned_word = strncat(cleaned_word, word, MAX_WORD_LENGTH - 1);
                 cleaned_word = clean_word(word);
                 word = strtok(NULL, " \n");
             }
@@ -85,6 +78,7 @@ Hashmap *hashmap_from_file(char *path)
             }
 
             hashmap_insert(map, cleaned_word);
+            free(cleaned_word);
         }
     }
 
@@ -218,7 +212,7 @@ void hashmap_print(Hashmap *map)
     printf("Total unique words: %zu\n", total_items);
     for (size_t i = 0; i < total_items; i++)
     {
-        printf("(#%zu) %s: %zu\n", i + 1, all_items[i].word, all_items[i].count);
+        printf("#%.5zu %s: %zu\n", i + 1, all_items[i].word, all_items[i].count);
     }
 
     free(all_items);

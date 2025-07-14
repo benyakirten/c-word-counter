@@ -218,7 +218,7 @@ void hashmap_print(Hashmap *map)
     printf("Total unique words: %zu\n", total_items);
     for (size_t i = 0; i < total_items; i++)
     {
-        printf("(%zu) %s: %zu\n", i + 1, all_items[i].word, all_items[i].count);
+        printf("(#%zu) %s: %zu\n", i + 1, all_items[i].word, all_items[i].count);
     }
 
     free(all_items);

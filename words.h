@@ -1,5 +1,5 @@
-#ifndef READFILE_H
-#define READFILE_H
+#ifndef WORDS_H
+#define WORDS_H
 
 char *clean_word(char *word);
 

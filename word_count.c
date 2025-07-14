@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
         printf("Word count for file %s:\n", argv[i]);
         printf("Total words: %zu\n", word_list->count);
-        hashmap_print(map);
+        hashmap_print_sorted(map);
 
         free(word_list);
         hashmap_free(map);

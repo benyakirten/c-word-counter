@@ -29,10 +29,22 @@ Hashmap *hashmap_new()
         ArrayList *array_list = array_list_new(NULL);
         if (array_list == NULL)
         {
-            return false; // Memory allocation failed}
+            // Free previously allocated lists before returning
+            for (size_t j = 0; j < i; j++)
+            {
+                if (map->items[j].data != NULL)
+                {
+                    free(map->items[j].data);
+                }
+            }
+            free(map);
+            return NULL; // Memory allocation failed
         }
 
+        // Copy the ArrayList contents but keep the data pointer
         map->items[i] = *array_list;
+        // Free only the ArrayList wrapper, not the data
+        free(array_list);
     }
 
     return map;
@@ -64,10 +76,13 @@ void hashmap_free(Hashmap *map)
     {
         for (size_t i = 0; i < HASHMAP_SIZE; i++)
         {
-            ArrayList array_list = map->items[i];
-            array_list_free(&array_list);
+            // Only free the data portion, not the ArrayList struct itself
+            // since it's embedded in the hashmap struct
+            if (map->items[i].data != NULL)
+            {
+                free(map->items[i].data);
+            }
         }
-        free(map->items);
         free(map);
     }
 }

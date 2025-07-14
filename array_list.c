@@ -164,7 +164,7 @@ bool array_list_grow(ArrayList *list, size_t *new_capacity)
         return false; // No need to grow if the new capacity is less than the max ratio
     }
 
-    ArrayListItem *data = realloc(list->data, capacity * sizeof(size_t));
+    ArrayListItem *data = realloc(list->data, capacity * sizeof(ArrayListItem));
     if (data == NULL)
     {
         return false; // Memory allocation failed
@@ -178,7 +178,7 @@ bool array_list_grow(ArrayList *list, size_t *new_capacity)
     return true;
 }
 
-bool array_list_increase_count(ArrayList *list, size_t index, char word[ARRAY_LIST_WORD_MAX_LENGTH])
+bool array_list_increase_count(ArrayList *list, size_t index __attribute__((unused)), char word[ARRAY_LIST_WORD_MAX_LENGTH])
 {
     ArrayListItem *item = array_list_find(list, word);
     if (item == NULL)

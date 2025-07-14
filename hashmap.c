@@ -13,6 +13,10 @@ int hash(char *key)
     {
         hash = (hash << 0b101) - hash + (unsigned char)(*key++);
     }
+    if (hash < 0)
+    {
+        hash = -hash; // Ensure hash is non-negative
+    }
     return hash % HASHMAP_SIZE;
 }
 
@@ -22,17 +26,6 @@ Hashmap *hashmap_new()
     if (map == NULL)
     {
         return NULL; // Memory allocation failed
-    }
-
-    for (size_t i = 0; i < HASHMAP_SIZE; i++)
-    {
-        ArrayList *array_list = array_list_new(NULL);
-        if (array_list == NULL)
-        {
-            return false; // Memory allocation failed}
-        }
-
-        map->items[i] = *array_list;
     }
 
     return map;
@@ -64,10 +57,9 @@ void hashmap_free(Hashmap *map)
     {
         for (size_t i = 0; i < HASHMAP_SIZE; i++)
         {
-            ArrayList array_list = map->items[i];
-            array_list_free(&array_list);
+            ArrayList *array_list = map->items[i];
+            array_list_free(array_list);
         }
-        free(map->items);
         free(map);
     }
 }
@@ -75,7 +67,7 @@ void hashmap_free(Hashmap *map)
 size_t *hashmap_get(Hashmap *map, char *word)
 {
     int hash_value = hash(word);
-    ArrayList *array_list = &map->items[hash_value];
+    ArrayList *array_list = map->items[hash_value];
 
     if (array_list == NULL)
     {
@@ -94,7 +86,17 @@ size_t *hashmap_get(Hashmap *map, char *word)
 bool hashmap_insert(Hashmap *map, char word[ARRAY_LIST_WORD_MAX_LENGTH])
 {
     int hash_value = hash(word);
-    ArrayList *array_list = &map->items[hash_value];
+    ArrayList *array_list = map->items[hash_value];
+    if (array_list == NULL)
+    {
+        array_list = array_list_new(NULL);
+        if (array_list == NULL)
+        {
+            return false; // Memory allocation failed
+        }
+        map->items[hash_value] = array_list; // Store the new ArrayList in the hashmap
+    }
+
     ArrayListItem *item = array_list_find(array_list, word);
 
     if (item != NULL)
@@ -112,7 +114,7 @@ bool hashmap_insert(Hashmap *map, char word[ARRAY_LIST_WORD_MAX_LENGTH])
 bool hashmap_remove(Hashmap *map, char *word)
 {
     int hash_value = hash(word);
-    ArrayList *array_list = &map->items[hash_value];
+    ArrayList *array_list = map->items[hash_value];
 
     if (array_list == NULL || array_list == NULL)
     {
@@ -120,20 +122,6 @@ bool hashmap_remove(Hashmap *map, char *word)
     }
 
     return array_list_remove(array_list, word);
-}
-
-void hashmap_print(Hashmap *map)
-{
-    for (size_t i = 0; i < HASHMAP_SIZE; i++)
-    {
-        ArrayList array_list = map->items[i];
-
-        for (size_t j = 0; j < array_list.size; j++)
-        {
-            ArrayListItem array_item = array_list.data[j];
-            printf("Word: %s, Count: %zu\n", array_item.word, array_item.count);
-        }
-    }
 }
 
 int compare_items_desc(const void *a, const void *b)
@@ -148,13 +136,17 @@ int compare_items_desc(const void *a, const void *b)
     return 0;
 }
 
-void hashmap_print_sorted(Hashmap *map)
+void hashmap_print(Hashmap *map)
 {
     // First, count total number of items
     size_t total_items = 0;
     for (size_t i = 0; i < HASHMAP_SIZE; i++)
     {
-        total_items += map->items[i].size;
+        ArrayList *list = map->items[i];
+        if (list != NULL)
+        {
+            total_items += list->size;
+        }
     }
 
     // Allocate space for all items
@@ -169,10 +161,13 @@ void hashmap_print_sorted(Hashmap *map)
     size_t index = 0;
     for (size_t i = 0; i < HASHMAP_SIZE; i++)
     {
-        ArrayList list = map->items[i];
-        for (size_t j = 0; j < list.size; j++)
+        ArrayList *list = map->items[i];
+        if (list == NULL)
+            continue; // Skip empty lists
+
+        for (size_t j = 0; j < list->size; j++)
         {
-            all_items[index++] = list.data[j];
+            all_items[index++] = list->data[j];
         }
     }
 
@@ -180,9 +175,10 @@ void hashmap_print_sorted(Hashmap *map)
     qsort(all_items, total_items, sizeof(ArrayListItem), compare_items_desc);
 
     // Print sorted items
+    printf("Total unique words: %zu\n", total_items);
     for (size_t i = 0; i < total_items; i++)
     {
-        printf("(%zu) %s: %zu\n", strlen(all_items[i].word), all_items[i].word, all_items[i].count);
+        printf("%s: %zu\n", all_items[i].word, all_items[i].count);
     }
 
     free(all_items);

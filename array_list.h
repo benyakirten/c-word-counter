@@ -28,7 +28,6 @@ void array_list_free(ArrayList *list);
 bool array_list_remove(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH]);
 bool array_list_push(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH]);
 void array_list_shrink(ArrayList *list);
-bool array_list_increase_count(ArrayList *list, size_t index, char word[ARRAY_LIST_WORD_MAX_LENGTH]);
 ArrayListItem *array_list_find(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH]);
 
 #endif

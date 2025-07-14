@@ -3,8 +3,11 @@
 #include <stdio.h>
 
 #include "hashmap.h"
-#include "read_file.h"
 #include "array_list.h"
+#include "words.h"
+
+#define FILE_READ_BUFFER_SIZE 1024
+#define MAX_WORD_LENGTH 100
 
 int hash(char *key)
 {
@@ -31,7 +34,7 @@ Hashmap *hashmap_new()
     return map;
 }
 
-Hashmap *hashmap_from_words(char word_list[MAX_WORD_COUNT][MAX_WORD_LENGTH], size_t word_count)
+Hashmap *hashmap_from_file(char *path)
 {
     Hashmap *map = hashmap_new();
     if (map == NULL)
@@ -39,12 +42,49 @@ Hashmap *hashmap_from_words(char word_list[MAX_WORD_COUNT][MAX_WORD_LENGTH], siz
         return NULL; // Memory allocation failed
     }
 
-    for (size_t i = 0; i < word_count; i++)
+    FILE *file = fopen(path, "r");
+    if (file == NULL)
     {
-        char *word = word_list[i];
-        if (!hashmap_insert(map, word))
+        return NULL; // File could not be opened
+    }
+
+    char buffer[FILE_READ_BUFFER_SIZE];
+    size_t bytes_read;
+    while ((bytes_read = fread(buffer, sizeof(char), FILE_READ_BUFFER_SIZE - 1, file)) > 0)
+    {
+        buffer[bytes_read] = '\0';
+        char *word = strtok(buffer, " \n");
+
+        while (word != NULL)
         {
-            return map;
+            char *cleaned_word = clean_word(word);
+            word = strtok(NULL, " \n");
+
+            if (cleaned_word[strlen(cleaned_word) - 1] == '-')
+            {
+                word = strncat(cleaned_word, word, MAX_WORD_LENGTH);
+                cleaned_word = clean_word(word);
+                word = strtok(NULL, " \n");
+            }
+
+            if (cleaned_word[strlen(cleaned_word) - 1] == '-')
+            {
+                word = strncat(cleaned_word, word, MAX_WORD_LENGTH);
+                cleaned_word = clean_word(word);
+                word = strtok(NULL, " \n");
+            }
+
+            if (cleaned_word == NULL)
+            {
+                break;
+            }
+
+            if (strlen(cleaned_word) == 0)
+            {
+                continue;
+            }
+
+            hashmap_insert(map, cleaned_word);
         }
     }
 
@@ -178,7 +218,7 @@ void hashmap_print(Hashmap *map)
     printf("Total unique words: %zu\n", total_items);
     for (size_t i = 0; i < total_items; i++)
     {
-        printf("%s: %zu\n", all_items[i].word, all_items[i].count);
+        printf("(%zu) %s: %zu\n", i + 1, all_items[i].word, all_items[i].count);
     }
 
     free(all_items);

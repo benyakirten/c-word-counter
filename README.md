@@ -5,6 +5,6 @@ I taught myself programming in 2021. I never had a reason to learn or use C. I'm
 ## How to run
 
 ```bash
-$ make
+$ make clean && make all
 $ ./word_count.o pride_and_prejudice.txt
 ```

@@ -48,7 +48,7 @@ void array_list_free(ArrayList *list)
     }
 }
 
-bool array_list_push(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH])
+bool array_list_push(ArrayList *list, char word[WORD_MAX_LENGTH])
 {
     if (list->size >= list->capacity)
     {
@@ -60,7 +60,7 @@ bool array_list_push(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH])
     }
 
     ArrayListItem item;
-    strncpy(item.word, word, ARRAY_LIST_WORD_MAX_LENGTH);
+    strncpy(item.word, word, WORD_MAX_LENGTH);
     item.count = 1;
 
     list->data[list->size] = item;
@@ -117,7 +117,7 @@ ArrayListItem *array_list_get(ArrayList *list, size_t index)
     return &list->data[index];
 }
 
-bool array_list_remove(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH])
+bool array_list_remove(ArrayList *list, char word[WORD_MAX_LENGTH])
 {
     for (size_t i = 0; i < list->size; i++)
     {
@@ -178,7 +178,7 @@ bool array_list_grow(ArrayList *list, size_t *new_capacity)
     return true;
 }
 
-ArrayListItem *array_list_find(ArrayList *list, char word[ARRAY_LIST_WORD_MAX_LENGTH])
+ArrayListItem *array_list_find(ArrayList *list, char word[WORD_MAX_LENGTH])
 {
     for (size_t i = 0; i < list->size; i++)
     {
